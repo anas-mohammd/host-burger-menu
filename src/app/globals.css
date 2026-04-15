@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  --font-arabic: 'Noto Kufi Arabic', sans-serif;
+  --primary: #DC2626;
+  --primary-hover: #B91C1C;
+  --bg: #0a0a0a;
+  --card: #181818;
+  --card-alt: #1f1f1f;
+  --border: rgba(255, 255, 255, 0.07);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-arabic), sans-serif;
+  background: var(--bg);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: #161616; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 2px; }
+
+html { scroll-behavior: smooth; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Header gradient */
+.gradient-header {
+  background: linear-gradient(180deg, #111111 0%, rgba(10, 10, 10, 0.96) 100%);
+}
+
+/* Card hover effect */
+.item-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.item-card:hover {
+  border-color: rgba(220, 38, 38, 0.3) !important;
+  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.12), 0 12px 32px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Pulse animation for cart badge */
+@keyframes pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+.pop { animation: pop 0.22s ease-out; }
+
+/* Slide-up animation */
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.slide-up { animation: slideUp 0.38s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Detail sheet slide-up */
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.sheet-up { animation: sheetUp 0.32s cubic-bezier(0.32, 0.72, 0, 1); }
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.4s ease-out both; }
+
+/* Stagger for menu items */
+.fade-in:nth-child(1) { animation-delay: 0.04s; }
+.fade-in:nth-child(2) { animation-delay: 0.09s; }
+.fade-in:nth-child(3) { animation-delay: 0.14s; }
+.fade-in:nth-child(4) { animation-delay: 0.19s; }
+.fade-in:nth-child(5) { animation-delay: 0.24s; }
+.fade-in:nth-child(6) { animation-delay: 0.29s; }
+
+/* Backdrop blur utility */
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.backdrop-in { animation: backdropIn 0.25s ease; }
+
+/* WhatsApp button pulse */
+@keyframes waPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(37, 211, 102, 0); }
+}
+.wa-pulse { animation: waPulse 2s ease-in-out infinite; }
