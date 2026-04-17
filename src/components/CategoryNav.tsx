@@ -23,7 +23,7 @@ export default function CategoryNav({ categories, activeId, viewMode, onSelect, 
   }, [activeId]);
 
   return (
-    <div className="sticky top-[65px] z-30 bg-[#0a0a0a]/92 backdrop-blur-md border-b border-white/5">
+    <div className="sticky top-[72px] z-30 bg-[#0a0a0a]/92 backdrop-blur-md border-b border-white/5">
       <div className="max-w-3xl mx-auto flex items-center">
 
         {/* Categories scrollable area */}
