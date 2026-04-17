@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { ReviewCreate, Restaurant } from '@/types';
 import { menuApi } from '@/lib/api';
 import { Star, Send, Loader2, X, Info, Phone } from 'lucide-react';
@@ -106,10 +105,56 @@ export default function ReviewSection({ slug, cartVisible = false, restaurant }:
 
   return (
     <>
+      {/* Social links popup — appears above info FAB */}
+      {infoOpen && restaurant && hasSocial && (
+        <>
+          <div
+            className="fixed inset-0 z-[39]"
+            onClick={() => setInfoOpen(false)}
+          />
+          <div
+            className="fixed right-4 z-40 flex flex-col gap-2.5 items-center"
+            style={{ bottom: `${infoBottom + 52}px` }}
+          >
+            {restaurant.phone_number && (
+              <a
+                href={`tel:${restaurant.phone_number}`}
+                className="w-11 h-11 rounded-full bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-lg transition-all active:scale-95"
+                onClick={() => setInfoOpen(false)}
+              >
+                <Phone className="w-4.5 h-4.5" />
+              </a>
+            )}
+            {restaurant.instagram_url && (
+              <a
+                href={restaurant.instagram_url.startsWith('http') ? restaurant.instagram_url : `https://instagram.com/${restaurant.instagram_url}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-full bg-pink-500/15 hover:bg-pink-500/25 border border-pink-500/20 flex items-center justify-center text-pink-400 shadow-lg transition-all active:scale-95"
+                onClick={() => setInfoOpen(false)}
+              >
+                <InstagramIcon className="w-4.5 h-4.5" />
+              </a>
+            )}
+            {restaurant.whatsapp_number && (
+              <a
+                href={`https://wa.me/${restaurant.whatsapp_number}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-full bg-green-500/15 hover:bg-green-500/25 border border-green-500/20 flex items-center justify-center text-green-400 shadow-lg transition-all active:scale-95"
+                onClick={() => setInfoOpen(false)}
+              >
+                <WhatsAppIcon className="w-4.5 h-4.5" />
+              </a>
+            )}
+          </div>
+        </>
+      )}
+
       {/* Info FAB — above review button */}
       {restaurant && (
         <button
-          onClick={() => setInfoOpen(true)}
+          onClick={() => setInfoOpen(!infoOpen)}
           className="fixed right-4 z-40 rounded-full bg-[#1a1a1a] border border-white/10 hover:border-white/25 hover:bg-white/8 active:scale-95 text-white/40 hover:text-white/80 shadow-xl transition-all flex flex-col items-center justify-center gap-0.5"
           aria-label="معلومات المطعم"
           style={{
@@ -119,7 +164,7 @@ export default function ReviewSection({ slug, cartVisible = false, restaurant }:
             transition: 'bottom 0.3s cubic-bezier(0.4,0,0.2,1)',
           }}
         >
-          <Info className="w-4 h-4" />
+          <Info className={`w-4 h-4 transition-transform duration-300 ${infoOpen ? 'rotate-180' : ''}`} />
           <span className="text-[8px] font-bold leading-none">معلومات</span>
         </button>
       )}
@@ -139,89 +184,6 @@ export default function ReviewSection({ slug, cartVisible = false, restaurant }:
         <Star className="w-5 h-5" />
         <span className="text-[9px] font-bold leading-none">تقييم</span>
       </button>
-
-      {/* Info Modal */}
-      {infoOpen && restaurant && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm"
-          onClick={(e) => { if (e.target === e.currentTarget) setInfoOpen(false); }}
-        >
-          <div className="w-full max-w-sm bg-[#111] border border-white/10 rounded-t-3xl pb-8 overflow-hidden">
-            {/* Close bar */}
-            <div className="flex items-center justify-between px-5 pt-5 pb-3">
-              <h3 className="text-sm font-bold text-white/70">معلومات المطعم</h3>
-              <button
-                onClick={() => setInfoOpen(false)}
-                className="w-7 h-7 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-colors"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {/* Logo */}
-            {restaurant.logo_url && (
-              <div className="flex justify-center pt-2 pb-4">
-                <div className="relative w-20 h-20 rounded-2xl overflow-hidden ring-1 ring-white/10">
-                  <Image
-                    src={restaurant.logo_url}
-                    alt={restaurant.name}
-                    fill
-                    className="object-cover"
-                    sizes="80px"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Name */}
-            <p className="text-center text-white font-black text-base px-5 mb-1">{restaurant.name}</p>
-
-            {/* Description */}
-            {restaurant.description && (
-              <p className="text-center text-white/40 text-xs px-6 mb-5 leading-relaxed">
-                {restaurant.description}
-              </p>
-            )}
-
-            {/* Social links */}
-            {hasSocial && (
-              <div className="flex items-center justify-center gap-3 px-5 pt-2">
-                {restaurant.whatsapp_number && (
-                  <a
-                    href={`https://wa.me/${restaurant.whatsapp_number}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 hover:bg-green-500/18 border border-green-500/15 text-green-400 text-xs font-semibold transition-colors"
-                  >
-                    <WhatsAppIcon className="w-3.5 h-3.5" />
-                    واتساب
-                  </a>
-                )}
-                {restaurant.instagram_url && (
-                  <a
-                    href={restaurant.instagram_url.startsWith('http') ? restaurant.instagram_url : `https://instagram.com/${restaurant.instagram_url}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 hover:bg-pink-500/18 border border-pink-500/15 text-pink-400 text-xs font-semibold transition-colors"
-                  >
-                    <InstagramIcon className="w-3.5 h-3.5" />
-                    انستقرام
-                  </a>
-                )}
-                {restaurant.phone_number && (
-                  <a
-                    href={`tel:${restaurant.phone_number}`}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 hover:bg-blue-500/18 border border-blue-500/15 text-blue-400 text-xs font-semibold transition-colors"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    اتصال
-                  </a>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Review Modal */}
       {open && (

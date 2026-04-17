@@ -111,6 +111,7 @@ html.light .gradient-header {
 
 /* ─ Backgrounds ─────────────────────────────────── */
 html.light .bg-\[\#0f0f0f\]       { background-color: #f5f5f5 !important; }
+html.light .bg-\[\#141414\]       { background-color: #f8f8f8 !important; }
 html.light .bg-\[\#0a0a0a\]       { background-color: #efefef !important; }
 html.light .bg-\[\#0a0a0a\]\/92   { background-color: rgba(245,245,245,0.94) !important; }
 html.light .bg-\[\#111\]          { background-color: #ffffff !important; }
