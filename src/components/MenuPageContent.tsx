@@ -14,26 +14,8 @@ import ProductDetailModal from '@/components/ProductDetailModal';
 import ReviewSection from '@/components/ReviewSection';
 import SplashScreen from '@/components/SplashScreen';
 import toast from 'react-hot-toast';
-import { UtensilsCrossed, ShoppingCart, Phone } from 'lucide-react';
+import { UtensilsCrossed, ShoppingCart } from 'lucide-react';
 
-function InstagramIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function WhatsAppIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.522 5.849L0 24l6.351-1.498A11.938 11.938 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.892 0-3.667-.502-5.198-1.381l-.373-.221-3.87.913.975-3.764-.242-.386A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-    </svg>
-  );
-}
 
 export default function MenuPageContent() {
   const { slug } = useParams<{ slug: string }>();
@@ -52,6 +34,9 @@ export default function MenuPageContent() {
   const [detailItem, setDetailItem] = useState<MenuItem | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
+  // View mode
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+
   // Active category (for sticky nav highlight)
   const [activeCatId, setActiveCatId] = useState<string | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement>>({});
@@ -59,6 +44,10 @@ export default function MenuPageContent() {
 
   // ── Load menu ────────────────────────────────────────────────────────────
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem('viewMode') as 'list' | 'grid' | null;
+      if (saved) setViewMode(saved);
+    } catch {}
     menuApi.getMenu(slug)
       .then((d) => {
         setData(d);
@@ -232,50 +221,17 @@ export default function MenuPageContent() {
   const { restaurant, categories, items, offers } = data;
   const currencyCode = restaurant.currency_code || 'IQD';
   const currencySymbol = getCurrencySymbol(currencyCode);
-  const hasSocial = restaurant.whatsapp_number || restaurant.instagram_url || restaurant.phone_number;
-
   return (
     <>
       <Header restaurant={restaurant} cartCount={cartCount} onCartClick={() => setCartOpen(true)} />
 
-      {/* Social links — below header, above CategoryNav */}
-      {hasSocial && (
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-center gap-3 border-b border-white/5">
-          {restaurant.whatsapp_number && (
-            <a
-              href={`https://wa.me/${restaurant.whatsapp_number}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 hover:bg-green-500/18 border border-green-500/15 text-green-400 text-xs font-semibold transition-colors"
-            >
-              <WhatsAppIcon className="w-3.5 h-3.5" />
-              واتساب
-            </a>
-          )}
-          {restaurant.instagram_url && (
-            <a
-              href={restaurant.instagram_url.startsWith('http') ? restaurant.instagram_url : `https://instagram.com/${restaurant.instagram_url}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 hover:bg-pink-500/18 border border-pink-500/15 text-pink-400 text-xs font-semibold transition-colors"
-            >
-              <InstagramIcon className="w-3.5 h-3.5" />
-              انستقرام
-            </a>
-          )}
-          {restaurant.phone_number && (
-            <a
-              href={`tel:${restaurant.phone_number}`}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 hover:bg-blue-500/18 border border-blue-500/15 text-blue-400 text-xs font-semibold transition-colors"
-            >
-              <Phone className="w-3.5 h-3.5" />
-              اتصال
-            </a>
-          )}
-        </div>
-      )}
-
-      <CategoryNav categories={categories} activeId={activeCatId} onSelect={scrollToCategory} />
+      <CategoryNav
+        categories={categories}
+        activeId={activeCatId}
+        viewMode={viewMode}
+        onSelect={scrollToCategory}
+        onViewChange={(mode) => { setViewMode(mode); try { localStorage.setItem('viewMode', mode); } catch {} }}
+      />
 
       <main className="max-w-3xl mx-auto px-4 pb-32 pt-5 space-y-10">
 
@@ -303,7 +259,7 @@ export default function MenuPageContent() {
               )}
 
               {/* Items grid */}
-              <div className="space-y-4">
+              <div className={viewMode === 'grid' ? 'grid grid-cols-2 gap-3' : 'space-y-4'}>
                 {catItems.map((item) => (
                   <MenuItemCard
                     key={item.id}
@@ -311,6 +267,7 @@ export default function MenuPageContent() {
                     currencyCode={currencyCode}
                     cart={cart}
                     offers={offers}
+                    compact={viewMode === 'grid'}
                     onAdd={addToCart}
                     onRemove={removeFromCart}
                     onOpenDetail={openDetail}
@@ -323,7 +280,7 @@ export default function MenuPageContent() {
       </main>
 
       {/* Floating review FAB */}
-      <ReviewSection slug={slug} cartVisible={cartCount > 0 && !cartOpen && !detailOpen} />
+      <ReviewSection slug={slug} cartVisible={cartCount > 0 && !cartOpen && !detailOpen} restaurant={restaurant} />
 
       {/* Floating cart button */}
       {cartCount > 0 && !cartOpen && !detailOpen && (

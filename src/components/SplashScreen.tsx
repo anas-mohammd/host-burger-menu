@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useTheme } from '@/lib/theme';
 
 interface Props {
   onDone: () => void;
@@ -9,6 +10,7 @@ interface Props {
 
 export default function SplashScreen({ onDone }: Props) {
   const [phase, setPhase] = useState<'in' | 'hold' | 'out'>('in');
+  const { theme } = useTheme();
 
   useEffect(() => {
     // fade-in → hold → fade-out
@@ -35,7 +37,7 @@ export default function SplashScreen({ onDone }: Props) {
         }}
       >
         <Image
-          src="/logo.svg"
+          src={theme === 'light' ? '/logo-light.svg' : '/logo.svg'}
           alt="logo"
           width={160}
           height={160}

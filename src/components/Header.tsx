@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import { Restaurant } from '@/types';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/lib/theme';
 
 interface Props {
   restaurant: Restaurant;
@@ -10,8 +11,8 @@ interface Props {
   onCartClick: () => void;
 }
 
-
 export default function Header({ restaurant, cartCount, onCartClick }: Props) {
+  const { theme, toggle } = useTheme();
   const words = restaurant.name.split(' ');
   const firstWord = words[0];
   const restWords = words.slice(1).join(' ');
@@ -21,7 +22,7 @@ export default function Header({ restaurant, cartCount, onCartClick }: Props) {
       <div className="max-w-3xl mx-auto px-4 py-3">
         <div className="flex items-center gap-3">
 
-          {/* Cart button */}
+          {/* Cart button — right side (RTL) */}
           <button
             onClick={onCartClick}
             className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-white/8 hover:bg-white/12 active:scale-95 transition-all border border-white/8"
@@ -36,19 +37,25 @@ export default function Header({ restaurant, cartCount, onCartClick }: Props) {
           </button>
 
           {/* Restaurant info — center */}
-          <div className="flex-1 min-w-0 flex items-center justify-center gap-2.5">
-            {/* Logo */}
-            <Image src="/logo.svg" alt="logo" width={45} height={45} className="shrink-0" />
-
-            {/* Name */}
-            <h1 className="text-lg font-black tracking-wide uppercase leading-tight">
+          <div className="flex-1 min-w-0 flex items-center justify-center">
+            <Image src={theme === 'light' ? '/logo-light.svg' : '/logo.svg'} alt="logo" width={50} height={50} className="shrink-0" />
+            <h1 className="text-lg font-black tracking-wide uppercase leading-tight pt-2">
               <span className="text-[#DC2626]">{firstWord}</span>
               {restWords && <span className="text-white"> {restWords}</span>}
             </h1>
           </div>
 
-          {/* Spacer to balance cart button */}
-          <div className="w-10 h-10 shrink-0" />
+          {/* Theme toggle — left side (RTL) */}
+          <button
+            onClick={toggle}
+            className="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-white/8 hover:bg-white/12 active:scale-95 transition-all border border-white/8"
+            aria-label={theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+          >
+            {theme === 'dark'
+              ? <Sun className="w-[18px] h-[18px] text-white/70" />
+              : <Moon className="w-[18px] h-[18px] text-white/70" />
+            }
+          </button>
 
         </div>
       </div>
